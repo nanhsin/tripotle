@@ -1,6 +1,9 @@
 import random
 import pandas as pd
 
+def random_recommendation(df, num_songs=1):
+    return df.sample(n=num_songs)
+
 def get_random_songs(num_songs=1):
     df = pd.read_csv('billboard_lyrics_1960-2024.csv')
     return df.sample(n=num_songs).to_dict(orient='records')
