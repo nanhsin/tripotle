@@ -2,6 +2,7 @@ import streamlit as st
 from streamlit_js_eval import streamlit_js_eval
 from dotenv import load_dotenv
 import pandas as pd
+import requests
 
 df = pd.read_csv('../data/billboard_lyrics_1960-2024_difficulty.csv')
 
@@ -87,41 +88,60 @@ def middle_column():
             st.write(f'Let\'s learn some vocabulary from the lyrics!')
 
 
+# vocabulary_example_db = {
+#                 "romance": {
+#                     "definition": """
+#                     noun
+#                     uk /rəʊˈmaɪns/ /rəʊˌmaɪns/
+#                     us /rɒʊˈmaɪns/ /rɒʊˌmaɪns/
 
-vocabulary_example_db = {
-                "romance": {
-                    "definition": """
-                    noun
-                    uk /rəʊˈmaɪns/ /rəʊˌmaɪns/
-                    us /rɒʊˈmaɪns/ /rɒʊˌmaɪns/
+#                     a close, usually short relationship of love between two people:
+#                     - They got married last year after a whirlwind (= very short and unexpected) romance.
+#                     - It was just a holiday romance.
+#                     - Office romances are usually a bad idea.
+#                     """
+#                 },
+#                 "damn": {
+#                     "definition": """
+#                     exclamation
+#                     uk /dæm/ us /dæm/
 
-                    a close, usually short relationship of love between two people:
-                    - They got married last year after a whirlwind (= very short and unexpected) romance.
-                    - It was just a holiday romance.
-                    - Office romances are usually a bad idea.
-                    """
-                },
-                "damn": {
-                    "definition": """
-                    exclamation
-                    uk /dæm/ us /dæm/
+#                     used to express anger or frustration:
+#                     - Damn! I forgot my keys.
+#                     - I don't give a damn what they think.
+#                     """
+#                 },
+#                 "lover": {
+#                     "definition": """
+#                     noun
+#                     uk /ˈlʌv.ər/ us /ˈlʌv.ɚ/
 
-                    used to express anger or frustration:
-                    - Damn! I forgot my keys.
-                    - I don't give a damn what they think.
-                    """
-                },
-                "lover": {
-                    "definition": """
-                    noun
-                    uk /ˈlʌv.ər/ us /ˈlʌv.ɚ/
+#                     a partner in a sexual or romantic relationship outside marriage:
+#                     - She's been his lover for years.
+#                     - He's a lover of fine wine.
+#                     """
+#                 }
+#             }
 
-                    a partner in a sexual or romantic relationship outside marriage:
-                    - She's been his lover for years.
-                    - He's a lover of fine wine.
-                    """
-                }
-            }
+
+def get_dictionary(word):
+    url = f"https://api.dictionaryapi.dev/api/v2/entries/en/{word}"
+    response = requests.get(url)
+    word = {}
+    try:
+        word['partOfSpeech'] = response.json()[0]["meanings"][0]["partOfSpeech"]
+    except:
+        word['partOfSpeech'] = ""
+    try:
+        word['phonetics'] = response.json()[0]["phonetics"][0]["text"]
+    except:
+        word['phonetics'] = ""
+    try:
+        word['definition'] = response.json()[0]["meanings"][0]["definitions"][0]["definition"]
+    except:
+        word['definition'] = ""
+    return word
+
 
 def right_column():
     """
@@ -135,9 +155,14 @@ def right_column():
             if search_word.strip():
 
                 # Look up the word in the vocabulary database
-                word_lower = search_word.lower()
-                if word_lower in vocabulary_example_db:
-                    st.session_state.vocab_definition = vocabulary_example_db[word_lower]["definition"]
+                # word_lower = search_word.lower()
+                # if word_lower in vocabulary_example_db:
+                #     st.session_state.vocab_definition = vocabulary_example_db[word_lower]["definition"]
+                # else:
+                #     st.session_state.vocab_definition = f"**'{search_word}'** not found in the vocabulary database."
+                word_dict = get_dictionary(search_word.lower())
+                if word_dict["definition"] != "":
+                    st.session_state.vocab_definition = f"({word_dict['partOfSpeech']})\n\n{word_dict['phonetics']}\n\n{word_dict['definition']}"
                 else:
                     st.session_state.vocab_definition = f"**'{search_word}'** not found in the vocabulary database."
 
