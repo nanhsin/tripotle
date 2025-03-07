@@ -1,6 +1,11 @@
-from django.urls import path
-from . import views
+from django.urls import path, include
+from .views import SaveVocabViewSet
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register(r'savevocab', SaveVocabViewSet)
 
 urlpatterns = [
-    path("", views.home, name="home"),
+    path("", include(router.urls)),
+    path('savevocab/', SaveVocabViewSet.as_view({'post': 'save_vocab'}), name='savevocab'),
 ]
