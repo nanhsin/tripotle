@@ -88,42 +88,6 @@ def middle_column():
             st.write(f'Let\'s learn some vocabulary from the lyrics!')
 
 
-# vocabulary_example_db = {
-#                 "romance": {
-#                     "definition": """
-#                     noun
-#                     uk /rəʊˈmaɪns/ /rəʊˌmaɪns/
-#                     us /rɒʊˈmaɪns/ /rɒʊˌmaɪns/
-
-#                     a close, usually short relationship of love between two people:
-#                     - They got married last year after a whirlwind (= very short and unexpected) romance.
-#                     - It was just a holiday romance.
-#                     - Office romances are usually a bad idea.
-#                     """
-#                 },
-#                 "damn": {
-#                     "definition": """
-#                     exclamation
-#                     uk /dæm/ us /dæm/
-
-#                     used to express anger or frustration:
-#                     - Damn! I forgot my keys.
-#                     - I don't give a damn what they think.
-#                     """
-#                 },
-#                 "lover": {
-#                     "definition": """
-#                     noun
-#                     uk /ˈlʌv.ər/ us /ˈlʌv.ɚ/
-
-#                     a partner in a sexual or romantic relationship outside marriage:
-#                     - She's been his lover for years.
-#                     - He's a lover of fine wine.
-#                     """
-#                 }
-#             }
-
-
 def get_dictionary(word):
     url = f"https://api.dictionaryapi.dev/api/v2/entries/en/{word}"
     response = requests.get(url)
@@ -154,20 +118,12 @@ def right_column():
         if st.button("Search"):
             if search_word.strip():
 
-                # Look up the word in the vocabulary database
-                # word_lower = search_word.lower()
-                # if word_lower in vocabulary_example_db:
-                #     st.session_state.vocab_definition = vocabulary_example_db[word_lower]["definition"]
-                # else:
-                #     st.session_state.vocab_definition = f"**'{search_word}'** not found in the vocabulary database."
                 word_dict = get_dictionary(search_word.lower())
                 if word_dict["definition"] != "":
                     st.session_state.vocab_definition = f"({word_dict['partOfSpeech']})\n\n{word_dict['phonetics']}\n\n{word_dict['definition']}"
                 else:
                     st.session_state.vocab_definition = f"**'{search_word}'** not found in the vocabulary database."
 
-                # # Clear the input box after searching
-                # st.session_state.vocab_search = ""
             else:
                 st.warning("Please enter a word to search.")
 
@@ -176,8 +132,6 @@ def right_column():
             st.markdown("#### Definition:")
             st.subheader(st.session_state.vocab_search)
             st.markdown(st.session_state.vocab_definition)
-            # Clear the input box after searching
-            # st.session_state.vocab_search = ""
 
 
 def init():
