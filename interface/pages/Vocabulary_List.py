@@ -1,4 +1,5 @@
 import streamlit as st
+import requests
 
 # Page title
 st.title("🎵 English Music Recommender")
@@ -7,6 +8,13 @@ st.subheader("Let's review your vocabulary!")
 # Initialize session state for vocabulary list and reviewed words
 def initialize_vocab_list():
     if "vocabulary_list" not in st.session_state:
+        # url = "http://localhost:8000/savevocab/"
+        # response = requests.get(url)
+        # if response.status_code == 200:
+        #     st.session_state.vocabulary_list = response.json()
+        # else:
+        #     st.error("Failed to load vocabulary list. Using a default list.")
+
         st.session_state.vocabulary_list = [
             {"word": "romance", "definition": "(n.) a close, usually short relationship of love between two people", "save_date": "2025/02/20", "reviewed": False},
             {"word": "damn", "definition": "(exclamation) used to express anger or frustration", "save_date": "2025/02/21", "reviewed": False},
@@ -44,7 +52,7 @@ def show_vocab_list():
                 word["reviewed"] = True
                 st.session_state.vocabulary_list = [w for w in st.session_state.vocabulary_list if not w["reviewed"]]
                 st.session_state.reviewed_words.append(word)
-                st.experimental_rerun()
+                st.rerun()
 
 # Display reviewed words at the bottom
 def show_reviewed_list():
@@ -71,7 +79,7 @@ def save_review():
     if st.button("Save Review"):
         move_reviewed_words()
         st.success("Review saved! Refreshing the list...")
-        st.experimental_rerun()
+        st.rerun()
 
 
 

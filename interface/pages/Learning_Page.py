@@ -1,6 +1,5 @@
 import streamlit as st
 from streamlit_js_eval import streamlit_js_eval
-from dotenv import load_dotenv
 import pandas as pd
 import requests
 
@@ -43,7 +42,7 @@ def left_column():
 
                 st.session_state["title"] = filtered_songs.loc[st.session_state.song_index]["title"]
                 st.session_state["artist"] = filtered_songs.loc[st.session_state.song_index]["artist"]
-                st.session_state["lyrics"] = filtered_songs.loc[st.session_state.song_index]["lyrics"]
+                st.session_state["lyrics"] = filtered_songs.loc[st.session_state.song_index]["lyrics_ori"]
 
                 st.session_state["song_bool"] = True
 
@@ -107,6 +106,15 @@ def get_dictionary(word):
     return word
 
 
+def save_vocab(word, definition):
+    url = "http://localhost:8000/savevocab/"
+    response = requests.post(url, json={"word": word, "definition": definition})
+    if response.status_code == 201:
+        return True
+    else:
+        return False
+
+
 def right_column():
     """
     Manages the right column in the Streamlit application, handling the vocabulary search box and display.
@@ -133,13 +141,15 @@ def right_column():
             st.subheader(st.session_state.vocab_search)
             st.markdown(st.session_state.vocab_definition)
 
+            if st.button("Save"):
+                save_vocab(st.session_state.vocab_search, st.session_state.vocab_definition)
+
 
 def init():
     """
     Initializes the session state variables used in the Streamlit application and
     loads environment variables.
     """
-    load_dotenv()
 
     if "title" not in st.session_state:
         st.session_state["title"] = ""
