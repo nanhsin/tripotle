@@ -8,18 +8,18 @@ st.subheader("Let's review your vocabulary!")
 # Initialize session state for vocabulary list and reviewed words
 def initialize_vocab_list():
     if "vocabulary_list" not in st.session_state:
-        # url = "http://localhost:8000/savevocab/"
-        # response = requests.get(url)
-        # if response.status_code == 200:
-        #     st.session_state.vocabulary_list = response.json()
-        # else:
-        #     st.error("Failed to load vocabulary list. Using a default list.")
+        url = "http://localhost:8000/savevocab/"
+        response = requests.get(url)
+        if response.status_code == 200:
+            st.session_state.vocabulary_list = response.json()
+        else:
+            st.error("Failed to load vocabulary list. Using a default list.")
 
-        st.session_state.vocabulary_list = [
-            {"word": "romance", "definition": "(n.) a close, usually short relationship of love between two people", "save_date": "2025/02/20", "reviewed": False},
-            {"word": "damn", "definition": "(exclamation) used to express anger or frustration", "save_date": "2025/02/21", "reviewed": False},
-            {"word": "lover", "definition": "(n.) a partner in a sexual or romantic relationship outside marriage", "save_date": "2025/02/22", "reviewed": False},
-        ]
+        # st.session_state.vocabulary_list = [
+        #     {"word": "romance", "definition": "(n.) a close, usually short relationship of love between two people", "save_date": "2025/02/20", "reviewed": False},
+        #     {"word": "damn", "definition": "(exclamation) used to express anger or frustration", "save_date": "2025/02/21", "reviewed": False},
+        #     {"word": "lover", "definition": "(n.) a partner in a sexual or romantic relationship outside marriage", "save_date": "2025/02/22", "reviewed": False},
+        # ]
 
     if "reviewed_words" not in st.session_state:
         st.session_state.reviewed_words = []
