@@ -123,6 +123,10 @@ def right_column():
         st.subheader("Search Vocabulary")
         search_word = st.text_input("Enter a word to search:", value=st.session_state.vocab_search, key="vocab_search")
 
+        # Reset vocab_definition
+        if not search_word:
+            st.session_state.vocab_definition = ""
+
         if st.button("Search"):
             if search_word.strip():
 
@@ -136,7 +140,7 @@ def right_column():
                 st.warning("Please enter a word to search.")
 
         # Display the vocabulary definition (if available)
-        if "vocab_definition" in st.session_state:
+        if st.session_state.get("vocab_definition"):
             st.markdown("#### Definition:")
             st.subheader(st.session_state.vocab_search)
             st.markdown(st.session_state.vocab_definition)
