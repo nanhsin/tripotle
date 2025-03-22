@@ -2,14 +2,14 @@ import streamlit as st
 import requests
 import pandas as pd
 
-# Handle page automatically refresh when click on navigation tab
-# Initialize session state for tracking the current page
-if "current_page" not in st.session_state:
-    st.session_state.current_page = "Vocabulary List"
-# Check if the page has changed
-if st.session_state.current_page != "Vocabulary List":
-    st.session_state.current_page = "Vocabulary List"  # Update the session state
-    st.rerun()  # Trigger a rerun
+# # Handle page automatically refresh when click on navigation tab
+# # Initialize session state for tracking the current page
+# if "current_page" not in st.session_state:
+#     st.session_state.current_page = "Vocabulary List"
+# # Check if the page has changed
+# if st.session_state.current_page != "Vocabulary List":
+#     st.session_state.current_page = "Vocabulary List"  # Update the session state
+#     st.rerun()  # Trigger a rerun
 
 
 # Page title

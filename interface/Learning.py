@@ -5,14 +5,14 @@ import requests
 
 df = pd.read_csv("../data/billboard_lyrics_1960-2024_difficulty.csv")
 
-# Initialize session state for tracking the current page
-if "current_page" not in st.session_state:
-    st.session_state.current_page = "Learning"
+# # Initialize session state for tracking the current page
+# if "current_page" not in st.session_state:
+#     st.session_state.current_page = "Learning"
 
-# Check if the page has changed
-if st.session_state.current_page != "Learning":
-    st.session_state.current_page = "Learning"  # Update the session state
-    st.rerun()  # Trigger a rerun
+# # Check if the page has changed
+# if st.session_state.current_page != "Learning":
+#     st.session_state.current_page = "Learning"  # Update the session state
+#     st.rerun()  # Trigger a rerun
 
 # Set page title and layout
 st.set_page_config(page_title="English Music Recommender", layout="wide")
