@@ -128,7 +128,7 @@ def main():
     initialize_vocab_list()
     show_vocab_list()
     show_reviewed_list()
-    save_review()
+    # save_review()
 
 
 if __name__ == "__main__":
