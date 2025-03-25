@@ -182,16 +182,16 @@ def col2_display():
     """
     with col2:
         st.subheader("Search Vocabulary")
-        search_word = st.text_input("Enter a word to search:", value=st.session_state.vocab_search, key="vocab_search")
+        search_word = st.text_input("Enter a word to search:", value=st.session_state.vocab_search, key="vocab_search").strip().lower()
 
         # Reset vocab_definition
         if not search_word:
             st.session_state.vocab_definition = ""
 
         if st.button("Search"):
-            if search_word.strip():
+            if search_word:
 
-                word_dict = get_dictionary(search_word.lower())
+                word_dict = get_dictionary(search_word)
                 if word_dict["definition"] != "":
                     st.session_state.vocab_definition = f"({word_dict['partOfSpeech']})\n\n{word_dict['phonetics']}\n\n{word_dict['definition']}"
                 else:
@@ -203,12 +203,14 @@ def col2_display():
         # Display the vocabulary definition (if available)
         if st.session_state.get("vocab_definition"):
             st.markdown("#### Definition:")
-            st.subheader(st.session_state.vocab_search)
+            # st.subheader(st.session_state.vocab_search)
+            st.subheader(search_word)
             st.markdown(st.session_state.vocab_definition)
 
             if st.button("Save"):
                 save_definition = st.session_state.vocab_definition.replace("\n\n", " ")
-                save_vocab(st.session_state.vocab_search, save_definition)
+                # save_vocab(st.session_state.vocab_search, save_definition)
+                save_vocab(search_word, save_definition)
 
 # def right_column():
 #     """
