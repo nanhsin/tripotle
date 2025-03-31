@@ -282,6 +282,11 @@ def login():
             st.session_state['username'] = username
             st.session_state['auth_token'] = token
             st.success(f"Welcome, {username}!")
+            url = "http://localhost:8000/savevocab/"
+            headers = {"Authorization": f"Token {st.session_state.get('auth_token', '')}"}
+            response_vocab = requests.get(url, headers=headers)
+            if response_vocab.status_code == 200:
+                st.session_state.vocabulary_list = response_vocab.json()
             time.sleep(1)
             st.rerun()
         else:
@@ -297,6 +302,11 @@ def logout():
             st.session_state['logged_in'] = False
             st.session_state['username'] = ""
             st.session_state['auth_token'] = ""
+
+            # st.session_state drop vocabulary_list and reviewed_words
+            st.session_state.pop("vocabulary_list", None)
+            st.session_state.pop("reviewed_words", None)
+
             st.success("Logged out successfully")
             time.sleep(1)
             st.rerun()
