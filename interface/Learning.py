@@ -2,6 +2,7 @@ import streamlit as st
 from streamlit_js_eval import streamlit_js_eval
 import pandas as pd
 import requests
+import time
 
 df = pd.read_csv("../data/billboard_lyrics_1960-2024_difficulty.csv")
 
@@ -170,7 +171,13 @@ def get_dictionary(word):
 
 def save_vocab(word, definition):
     url = "http://localhost:8000/savevocab/"
-    response = requests.post(url, json={"word": word, "definition": definition})
+    if "auth_token" not in st.session_state:
+        token = streamlit_js_eval(js_expressions="localStorage.getItem('auth_token')")
+        if token:
+            st.session_state['auth_token'] = token
+            st.session_state['logged_in'] = True
+    headers = {"Authorization": f"Token {st.session_state.get('auth_token', '')}"}
+    response = requests.post(url, json={"word": word, "definition": definition}, headers=headers)
     if response.status_code == 201:
         return True
     else:
@@ -245,6 +252,56 @@ def col2_display():
 #                 save_vocab(st.session_state.vocab_search, save_definition)
 
 
+def register():
+    BASE_URL = "http://127.0.0.1:8000"
+    st.subheader("Register")
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    password2 = st.text_input("Confirm Password", type="password")
+    
+    if st.button("Register"):
+        data = {"username": username, "password1": password, "password2": password2}
+        response = requests.post(f"{BASE_URL}/register/", json=data)
+        if response.status_code == 201:
+            st.success("Registered successfully! Please log in.")
+        else:
+            st.error(f"Error: {response.json()}")
+
+def login():
+    BASE_URL = "http://127.0.0.1:8000"
+    st.subheader("Login")
+    username = st.text_input("Username", key="login_username")
+    password = st.text_input("Password", type="password", key="login_password", help="Enter your password")
+    if st.button("Login"):
+        data = {"username": username, "password": password}
+        response = requests.post(f"{BASE_URL}/login/", json=data)
+        if response.status_code == 200:
+            token = response.json().get('token')
+            streamlit_js_eval(js_expressions="localStorage.setItem('auth_token', '" + token + "')")
+            st.session_state['logged_in'] = True
+            st.session_state['username'] = username
+            st.session_state['auth_token'] = token
+            st.success(f"Welcome, {username}!")
+            time.sleep(1)
+            st.rerun()
+        else:
+            st.error("Invalid credentials")
+
+def logout():
+    BASE_URL = "http://127.0.0.1:8000"
+    st.subheader("Logout")
+    if st.button("Logout"):
+        response = requests.post(f"{BASE_URL}/logout/")
+        if response.status_code == 200:
+            streamlit_js_eval(js_expressions="localStorage.removeItem('auth_token')")
+            st.session_state['logged_in'] = False
+            st.session_state['username'] = ""
+            st.session_state['auth_token'] = ""
+            st.success("Logged out successfully")
+            time.sleep(1)
+            st.rerun()
+
+
 def init():
     """
     Initializes the session state variables used in the Streamlit application and
@@ -263,14 +320,25 @@ def init():
         st.session_state["lyrics"] = ""
     if "vocab_search" not in st.session_state:
         st.session_state["vocab_search"] = ""
+    if "logged_in" not in st.session_state:
+        st.session_state["logged_in"] = False
+        st.session_state["username"] = ""
 
 
 def main():
     init()
+    if not st.session_state["logged_in"]:
+        option = st.radio("Choose an option", ("Login", "Register"))
+        if option == "Login":
+            login()
+        elif option == "Register":
+            register()
+    else:
     # page_middle_column_title()
     # left_column()
-    col1_display()
-    col2_display()
+        col1_display()
+        col2_display()
+        logout()
     # middle_column()
     # right_column()
 

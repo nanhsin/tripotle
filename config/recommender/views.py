@@ -4,16 +4,20 @@ from .serializers import SaveVocabSerializer
 from rest_framework import viewsets, status, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework.authtoken.models import Token
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 # Create your views here.
 @action(detail=True, methods=['post'])
 class SaveVocabViewSet(viewsets.ModelViewSet):
     queryset = SaveVocab.objects.all()
     serializer_class = SaveVocabSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     
     def save_vocab(self, request):
         word_data = request.data.get('word')
@@ -24,28 +28,37 @@ class SaveVocabViewSet(viewsets.ModelViewSet):
         save_vocab.save() # Optional?
         return Response({'message': 'Vocab saved'}, status=status.HTTP_201_CREATED)
 
+@csrf_exempt
 def register_view(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        data = json.loads(request.body)
+        form = UserCreationForm(data)
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('/')
-    else:
-        form = UserCreationForm()
-    return render(request, 'recommender/register.html', {'form': form})
+            return JsonResponse({'message': 'Registration successful', 'user': user.username}, status=201)
+        else:
+            return JsonResponse({'errors': form.errors}, status=400)
+    return JsonResponse({"error": "Invalid request method"}, status=405)
 
+@csrf_exempt
 def login_view(request):
     if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
+        data = json.loads(request.body)
+        username = data.get('username')
+        password = data.get('password')
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            token, created = Token.objects.get_or_create(user=user)
             login(request, user)
-            return redirect('/')
-    else:
-        form = AuthenticationForm()
-    return render(request, 'recommender/login.html', {'form': form})
+            return JsonResponse({'message': 'Login successful', 'user': user.username, "token": token.key}, status=200)
+        else:
+            return JsonResponse({'error': 'Invalid credentials'}, status=401)
+    return JsonResponse({"error": "Invalid request method"}, status=405)
 
+@csrf_exempt
 def logout_view(request):
-    logout(request)
-    return redirect('/')
+    if request.method == 'POST':
+        logout(request)
+        return JsonResponse({'message': 'Logged out successfully'}, status=200)
+    return JsonResponse({"error": "Invalid request method"}, status=405)
