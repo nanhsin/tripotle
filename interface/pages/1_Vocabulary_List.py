@@ -13,7 +13,7 @@ import pandas as pd
 
 
 # Page title
-st.title("🎵 English Music Recommender")
+st.title("🎵 LyricsMaster")
 st.subheader("Let's review your vocabulary!")
 
 # Initialize session state for vocabulary list and reviewed words

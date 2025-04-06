@@ -15,8 +15,8 @@ df = pd.read_csv("../data/billboard_lyrics_1960-2024_difficulty.csv")
 #     st.rerun()  # Trigger a rerun
 
 # Set page title and layout
-st.set_page_config(page_title="English Music Recommender", layout="wide")
-st.title("🎵 English Music Recommender")
+st.set_page_config(page_title="LyricsMaster", layout="wide")
+st.title("🎵 LyricsMaster")
 
 # Create three columns for the layout
 # col1, col2, col3 = st.columns([1, 2, 1])

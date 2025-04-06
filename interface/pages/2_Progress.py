@@ -4,22 +4,23 @@ import pandas as pd
 from datetime import datetime, timedelta
 import pyarrow
 
-st.title("🎵 English Music Recommender")
+st.title("🎵 LyricsMaster")
 st.subheader("Let's check your progress!")
+st.markdown("<br><br>", unsafe_allow_html=True)
 
 col1, col2 = st.columns([1, 3])
 
 def progress_left():
     with col1:
-        st.subheader("Rita Wang")
-        st.write("ID: ritaycw")
-        st.write("Time Spent: 3 days _ mins")
+        st.subheader("Learner A")
+        st.write("ID: ilovelyrics")
+        st.write("Time Spent: 3 days 15 mins")
 
 
 data = {
     "Date": ["2025/02/20", "2025/02/21", "2025/02/22", "2025/02/23", "2025/02/24", "2025/02/25", "2025/02/26", "2025/02/27", "2025/02/28"],
-    "Learned": [3, 6, 4, 5, 3, 6, 4, 4, 5],
-    "Completed": [2, 4, 4, 2, 1, 3, 2, 4, 2],
+    "Saved": [3, 6, 4, 5, 3, 6, 4, 4, 5],
+    "Reviewed": [2, 4, 4, 2, 1, 3, 2, 4, 2],
 }
 
 df = pd.DataFrame(data)
@@ -33,11 +34,12 @@ chart = alt.Chart(df_melted).mark_bar().encode(
     x=alt.X("yearmonthdate(Date):O", title="Date", axis=alt.Axis(labelAngle=-45)),
     y=alt.Y("Count:Q"),
     color=alt.Color("Status:N", scale=alt.Scale(range=["#A9CCE3", "#21618C"])),
-    column="Status:N"
+    # column="Status:N",
+    xOffset="Status:N"
 ).properties(
     width=300,
     height=300,
-    title="Song Progress for the Past Month"
+    title="Vocabulary Progress for the Past Month"
 )
 # .configure_title(
 #     fontSize=16,
@@ -47,7 +49,7 @@ chart = alt.Chart(df_melted).mark_bar().encode(
 
 def progress_right():
     with col2:
-        st.write("In progress")
+        # st.write("In progress")
         st.altair_chart(chart, use_container_width=True)
 
 # def progress_page():
