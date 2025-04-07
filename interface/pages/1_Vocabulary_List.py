@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 import pandas as pd
+from streamlit_js_eval import streamlit_js_eval
 
 # # Handle page automatically refresh when click on navigation tab
 # # Initialize session state for tracking the current page
@@ -18,9 +19,15 @@ st.subheader("Let's review your vocabulary!")
 
 # Initialize session state for vocabulary list and reviewed words
 def initialize_vocab_list():
+    if "auth_token" not in st.session_state:
+        token = streamlit_js_eval(js_expressions="localStorage.getItem('auth_token')")
+        if token:
+            st.session_state['auth_token'] = token
+            st.session_state['logged_in'] = True
+    headers = {"Authorization": f"Token {st.session_state.get('auth_token', '')}"}
     if "vocabulary_list" not in st.session_state:
         url = "http://localhost:8000/savevocab/"
-        response = requests.get(url)
+        response = requests.get(url, headers=headers)
         if response.status_code == 200:
             st.session_state.vocabulary_list = response.json()
         else:
