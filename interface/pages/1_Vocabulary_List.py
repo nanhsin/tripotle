@@ -14,7 +14,7 @@ from streamlit_js_eval import streamlit_js_eval
 
 
 # Page title
-st.title("🎵 English Music Recommender")
+st.title("🎵 LyricsMaster")
 st.subheader("Let's review your vocabulary!")
 
 # Initialize session state for vocabulary list and reviewed words
